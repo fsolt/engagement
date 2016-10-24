@@ -41,7 +41,7 @@ unzip(file.path(id_dir, zip_name), exdir = id_dir)
 
 # EVS------
 id <- "4804" # Longitudinal Data File 1981-2008
-id_dir <- str_c(data_dir, "gesis/evs_files/ZA", id)
+id_dir <- str_c(data_dir, "gesis_files/evs_files/ZA", id)
 if (!dir.exists(id_dir)) dir.create(id_dir, 
                                     showWarnings = FALSE, 
                                     recursive = TRUE)
@@ -50,7 +50,21 @@ zip_name <- list.files(id_dir, pattern = "zip$")[[1]]
 unzip(file.path(id_dir, zip_name), exdir = id_dir)
 try(download_codebook(id, path = id_dir))
 
+# ISSP-----
+files_to_get <- c(3950, 6670) # Citizenship I & II
+s <- login(username = getOption("gesis_user"),
+           password = getOption("gesis_pass"))
+walk(files_to_get, function(id) {
+    id_dir <- str_c(data_dir, "gesis_files/issp_files/ZA", id)
+    if (!dir.exists(id_dir)) dir.create(id_dir, 
+                                        showWarnings = FALSE, 
+                                        recursive = TRUE)
+    download_dataset(s, id, path = id_dir)
+    try(download_codebook(id, path = id_dir))
+})
+
 # ESS------
+# none of the following works (yet)
 # set up directory
 id_dir <- str_c(data_dir, "ess_files/")
 if (!dir.exists(id_dir)) dir.create(id_dir, 
