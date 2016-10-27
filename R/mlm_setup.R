@@ -76,7 +76,8 @@ mlm_setup <- function(datasets_table,
             mutate_at(dep_var, funs(mean_cy = mean(., na.rm=T))) %>%
             {if (length(dep_var)==1) { 
                 filter(., !is.na(mean_cy)) %>% 
-                    ungroup()
+                    ungroup() %>% 
+                    select(c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
             } else {
                 mutate_at(., str_c(dep_var, "_mean_cy"), funs(coalesce(., 0))) %>% 
                     ungroup() %>% 
