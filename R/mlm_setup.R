@@ -22,7 +22,7 @@ mlm_setup <- function(datasets_table,
                       dep_var,
                       chime = TRUE) {
     # Get datasets table
-    if ("data.frame" %in% class(vars)) {
+    if ("data.frame" %in% class(datasets_table)) {
         ds <- datasets_table
     } else {
         ds <- read_csv(datasets_table)
@@ -31,9 +31,8 @@ mlm_setup <- function(datasets_table,
     l1_vars <- names(ds)[!names(ds) %in%
                              c("survey", "cy_data", "filepath", "id", "wt")]
     
-    file_rows <- seq(nrows(ds))
+    file_rows <- seq(nrow(ds))
 
-    # for (i in seq(nrows(ds))) {
     all_sets <- map_df(file_rows, function(i) {
         cat(i, " ")
         # v <- vars_table[i, ]
