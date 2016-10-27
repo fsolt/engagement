@@ -35,9 +35,7 @@ mlm_setup <- function(datasets_table,
 
     all_sets <- map_df(file_rows, function(i) {
         cat(i, " ")
-        # v <- vars_table[i, ]
-        # ds <- datasets_table[datasets_table$survey==v$survey, ]
-        
+
         # Get dataset
         fname <- list.files(ds$filepath[i], 
                                pattern = str_c(ds$id[i], ".*(dta|sav)$"))
@@ -76,11 +74,16 @@ mlm_setup <- function(datasets_table,
         t_data1 <- t_data %>%
             group_by(c_mlm, y_mlm) %>% 
             mutate_at(dep_var, funs(mean_cy = mean(., na.rm=T))) %>%
-            mutate_at(str_c(dep_var, "_mean_cy"), funs(coalesce(., 0))) %>%
-            ungroup() %>% 
-            mutate(sum_dv_mlm = rowSums(.[str_c(dep_var, "_mean_cy")])) %>% 
-            filter(sum_dv_mlm > 0) %>% 
-            select(c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
+            {if (length(dep_var)==1) { 
+                filter(., !is.na(mean_cy)) %>% 
+                    ungroup()
+            } else {
+                mutate_at(., str_c(dep_var, "_mean_cy"), funs(coalesce(., 0))) %>% 
+                    ungroup() %>% 
+                    mutate(sum_dv_mlm = rowSums(.[str_c(dep_var, "_mean_cy")])) %>% 
+                    filter(sum_dv_mlm > 0) %>% 
+                    select(c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
+            }}
     })
     
     # Chime
