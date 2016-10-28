@@ -38,12 +38,18 @@ mlm_setup <- function(datasets_table,
 
         # Get dataset
         fname <- list.files(ds$filepath[i], 
-                               pattern = str_c(ds$id[i], ".*(dta|sav)$"))
+                               pattern = str_c(ds$id[i], ".*(dta|sav|rdata)$"))
         fpath <- str_c(ds$filepath[i], fname)
         if (str_detect(fpath, "dta$")) {
             t_data <- read_dta(fpath)
-        } else {
+        } else if (str_detect(fpath, "sav$")) {
             t_data <- read_sav(fpath)
+        } else {
+            existing_obj <- ls()
+            load(fpath)
+            new_obj <- ls() 
+            new_obj <- new_obj[!new_obj %in% existing_obj]
+            t_data <- get(new_obj)
         }
         
         # Fix column names (sometimes necessary)
