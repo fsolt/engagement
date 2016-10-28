@@ -35,9 +35,10 @@ zip_name <- list.files(id_dir, pattern = "zip$")[[1]]
 unzip(file.path(id_dir, zip_name), exdir = id_dir)
 
 # WVS------
-# Download WVS_Longitudinal_1981-2014_stata_dta_v_2015_04_18 
+# Download WVS_Longitudinal_1981-2014_rdata_v_2015_04_18 
 # from http://www.worldvaluessurvey.org/WVSDocumentationWVL.jsp
-# to "~/Documents/Projects/Data/wvs_files/"
+# to "~/Documents/Projects/Data/wvs_files/", unzip, load,
+# and then *resave* with save(); over 30x smaller and *much* faster
 
 # EVS------
 id <- "4804" # Longitudinal Data File 1981-2008
