@@ -48,13 +48,16 @@ mlm_setup <- function(datasets_table,
             existing_obj <- ls()
             load(fpath)
             new_obj <- ls() 
-            new_obj <- new_obj[!new_obj %in% existing_obj]
+            new_obj <- new_obj[!new_obj %in% c("existing_obj", existing_obj)]
             t_data <- get(new_obj)
         }
         
         # Fix column names (sometimes necessary)
         valid_column_names <- make.names(names=names(t_data), unique=TRUE, allow_ = TRUE)
         names(t_data) <- valid_column_names
+        
+        # Add survey name
+        t_data$survey <- ds$survey[i]
             
         # Get country-years
         cc <- eval(parse(text = ds$cy_data[i]))
