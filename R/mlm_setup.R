@@ -86,13 +86,13 @@ mlm_setup <- function(datasets_table,
             {if (length(dep_var)==1) { 
                 filter(., !is.na(mean_cy)) %>% 
                     ungroup() %>% 
-                    select(c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
+                    select(survey, c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
             } else {
                 mutate_at(., str_c(dep_var, "_mean_cy"), funs(coalesce(., 0))) %>% 
                     ungroup() %>% 
                     mutate(sum_dv_mlm = rowSums(.[str_c(dep_var, "_mean_cy")])) %>% 
                     filter(sum_dv_mlm > 0) %>% 
-                    select(c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
+                    select(survey, c_mlm, y_mlm, wt_mlm, one_of(l1_vars))
             }}
     })
     
