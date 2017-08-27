@@ -15,6 +15,7 @@
 #' @importFrom readr read_csv
 #' @importFrom haven read_dta read_sav
 #' @importFrom beepr beep
+#' @importFrom stringr str_c
 #'
 #' @export
 
