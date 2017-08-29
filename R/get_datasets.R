@@ -125,16 +125,16 @@ walk(files_to_get, function(id) {
     try(download_codebook(id, path = id_dir))
 })
 
-# ees trend
-ees_trend <- "http://www.tcd.ie/Political_Science/staff/michael_marsh/trend_ees_stata.zip"
+# ees combo
+ees_combo <- "http://www.tcd.ie/Political_Science/staff/michael_marsh/combined_ees_stata.zip"
 
-id <- "ees_trend" # 1989, 1994, 1999, 2004
+id <- "ees_combo" # 1989, 1994, 1999, 2004
 id_dir <- file.path(data_dir, "misc_files", "ees_files", id)
-file_dir <- file.path(id_dir, "trend_ees_stata.zip")
+file_dir <- file.path(id_dir, "combined_ees_stata.zip")
 if (!dir.exists(id_dir)) dir.create(id_dir,
                                     showWarnings = FALSE,
                                     recursive = TRUE)
-download.file(ees_trend, file_dir)
+download.file(ees_combo, file_dir)
 zip_name <- list.files(id_dir, pattern = "zip$")[[1]]
 unzip(file.path(id_dir, zip_name), exdir = id_dir)
 
