@@ -13,7 +13,7 @@ files_to_get <- c("3904", "3938", "4056", "4229", "4411", "4414", "4506", "4526"
                   "4530", "4565", "4744", "4819", "4973", "5481", "5567", "5612",
                   "5685")
 
-data_dir <- "~/Documents/Projects/Data/"
+data_dir <- "~/Documents/Projects/Data/dcpo_surveys/"
 
 if (!dir.exists(data_dir)) dir.create(data_dir, 
                                       showWarnings = FALSE, 
@@ -72,8 +72,28 @@ if (!dir.exists(id_dir)) dir.create(id_dir,
                                     showWarnings = FALSE, 
                                     recursive = TRUE)
 
-# log in
+
+
+# ess_combo
+ess1_6 <- "http://www.europeansocialsurvey.org/downloadfile/esscumulative1-6e01_1.zip"
+
 s <- html_session("http://www.europeansocialsurvey.org/user/login")
+form <- html_form(s)[[2]] %>% 
+    set_values(u = getOption("ess_email"))
+suppressMessages(output <- submit_form(s, form) %>%
+                     stop_for_status() %>% 
+                     jump_to(ess1_6) %>% 
+                     submit_form(form))
+file_dir <- str_c(id_dir, "esscumulative1-6e01_1.zip")
+writeBin(httr::content(output$response, "raw"), file_dir)
+writeBin(ess1_6, str_c(id_dir, "esscumulative1-6e01_1.zip"))
+
+# ess7
+ess7 <- "http://www.europeansocialsurvey.org/file/download?f=ESS7e02.stata.zip&c=&y=2014"
+output <- logged_in %>% 
+
+    # log in
+    s <- html_session("http://www.europeansocialsurvey.org/user/login")
 form <- html_form(s)[[2]] %>% 
     set_values(u = getOption("ess_email"))
 suppressMessages(output <- submit_form(s, form) %>%
@@ -81,11 +101,7 @@ suppressMessages(output <- submit_form(s, form) %>%
                      jump_to(ess7) %>% 
                      submit_form(form))
 
-# ess7
-ess7 <- "http://www.europeansocialsurvey.org/file/download?f=ESS7e02.stata.zip&c=&y=2014"
-output <- logged_in %>% 
-    
-    file_dir <- file.path(id_dir, "ESS7e02.stata.zip")
+file_dir <- file.path(id_dir, "ESS7e02.stata.zip")
 writeBin(httr::content(ess7, "raw"), file_dir)
 zip_name <- list.files(id_dir, pattern = "zip$")[[1]]
 unzip(file.path(id_dir, zip_name), exdir = id_dir)
@@ -94,21 +110,32 @@ s <- html_session(ess7)
 form <- html_form(s)[[2]] %>% 
     set_values(u = getOption("ess_email"))
 
-
 file_dir <- file.path(id_dir, "ESS7e02.stata.zip"))
 
-# ess cumulative
-ess1_6 <- "http://www.europeansocialsurvey.org/downloadfile/esscumulative1-6e01_1.zip"
+# EES ----
+files_to_get <- c(5055, 5160) # EES 2009 & 2014
+s <- login(username = getOption("GESIS_USER"),
+           password = getOption("GESIS_PASS"))
+walk(files_to_get, function(id) {
+    id_dir <- str_c(data_dir, "gesis_files/ees_files/ZA", id)
+    if (!dir.exists(id_dir)) dir.create(id_dir, 
+                                        showWarnings = FALSE, 
+                                        recursive = TRUE)
+    download_dataset(s, id, path = id_dir)
+    try(download_codebook(id, path = id_dir))
+})
 
-s <- html_session("http://www.europeansocialsurvey.org/user/login")
-form <- html_form(s)[[2]] %>% 
-    set_values(u = getOption("ess_email"))
-suppressMessages(output <- submit_form(s, form) %>%
-                     stop_for_status() %>% 
-                     jump_to(ess1_6))
+# ees trend
+ees_trend <- "http://www.tcd.ie/Political_Science/staff/michael_marsh/trend_ees_stata.zip"
 
-file_dir <- str_c(id_dir, "esscumulative1-6e01_1.zip")
-writeBin(httr::content(output$response, "raw"), file_dir)
-writeBin(ess1_6, str_c(id_dir, "esscumulative1-6e01_1.zip"))
+id <- "ees_trend" # 1989, 1994, 1999, 2004
+id_dir <- file.path(data_dir, "misc_files", "ees_files", id)
+file_dir <- file.path(id_dir, "trend_ees_stata.zip")
+if (!dir.exists(id_dir)) dir.create(id_dir,
+                                    showWarnings = FALSE,
+                                    recursive = TRUE)
+download.file(ees_trend, file_dir)
 zip_name <- list.files(id_dir, pattern = "zip$")[[1]]
-unzip(str_c(id_dir, "esscumulative1-6e01_1.zip"), exdir = id_dir)
+unzip(file.path(id_dir, zip_name), exdir = id_dir)
+
+download.file("http://www.tcd.ie/Political_Science/staff/michael_marsh/codebook.pdf", file.path(id_dir, "trend_ees_codebook.pdf"))
