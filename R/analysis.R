@@ -4,7 +4,7 @@ library(haven)
 library(beepr)
 library(rvest)
 
-short_names <- function(cname) {
+short_country_names <- function(cname) {
     countrycode::countrycode(cname, "country.name", "country.name") %>%
     str_replace(", .*", "") %>% 
     str_replace("^Republic of ", "") %>% 
@@ -20,6 +20,7 @@ ds1 <- read_csv("~/Documents/Projects/engagement/data-raw/datasets_table1.csv") 
 l1_data_all <- mlm_setup(datasets_table = ds1,
                          dep_var = "int4",
                          chime = TRUE)
+
 
 # Define universe: democracies without substantial vote-buying or coercion
 # EU + OECD + Taiwan - Turkey - Mexico
@@ -43,7 +44,7 @@ eu_members <- read_html("https://en.wikipedia.org/wiki/Member_state_of_the_Europ
 
 c_universe <- c(eu_members, oecd_members, "Taiwan") %>% 
     unique() %>%                    
-    short_names() %>% 
+    short_country_names() %>% 
     setdiff(., c("Mexico", "Turkey"))   # exclude for vote-buying/coercion; 40 countries left
 
 l1_data <- l1_data_all %>% 
