@@ -27,7 +27,7 @@ l1_data_all <- mlm_setup(datasets_table = ds1,
 
 oecd_members <- read_html("https://en.wikipedia.org/wiki/Organisation_for_Economic_Co-operation_and_Development") %>% 
     html_table(fill=TRUE) %>%   # generates a list
-    nth(6) %>%                  # get sixth element of the list
+    nth(7) %>%                  # get seventh element of the list
     as_tibble() %>%             # make it a tibble (data_frame)
     select(Country) %>% 
     unlist() %>% 
